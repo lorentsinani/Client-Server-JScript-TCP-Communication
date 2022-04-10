@@ -23,6 +23,19 @@
 const net = require('net'); 
 
 const readline = require('readline'); 
+
+// creating a new client socket and connection with server using same port as server 
+
+const client = new net.Socket(); 
+
+client.connect(58901, process.argv[2], () => { 
+
+console.log('Connected to server'); 
+
+console.log("If u want to get your access to write read or execute please type 'login' "); 
+
+});
+
 client.on('data', (data) => { 
 
 console.log(data.toString('utf-8')); 
