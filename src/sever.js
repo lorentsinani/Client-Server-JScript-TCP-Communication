@@ -57,14 +57,15 @@ const server = net.createServer((socket) => {
         }
 
         
+        
         else if (message == "lorik lorik123" || message == "loreta loreta123" || message == "etror etror123") {
             console.log("Granting read access to user");
             fs.chmod("example.txt", 0o600, () => {
-                socket.write("\nReading 'readonly.txt' file content");
-                socket.write(fs.readFileSync('readonly.txt', 'utf-8'));
+                socket.write("\nReading 'readonly.txt' file content\n");
+                socket.write(fs.readFileSync('readonly.txt', 'utf-8') + "\n");
             });
         }
- 
+
         //adding some random conditionals of simulated messages
         else if (message == "Hello" || message == "hello") {
             socket.write("Hello client!");
@@ -75,16 +76,45 @@ const server = net.createServer((socket) => {
         else if (message == "What is my port" || message == "what is my port") {
             socket.write("Your port is: " + socket.remotePort);
         }
+        else if (message == "execute") {
+            socket.write("Which file u want to execute?");
+        }
+        else if (message == "example.txt") {
+            exec("example.txt", (error, stdout, stderr) => {
+                if (error) {
+                    console.log(`error: ${error.message}`);
+                    return;
+                }
+                if (stderr) {
+                    console.log(`stderr: ${stderr}`);
+                    return;
+                }
+                console.log(`stdout: ${stdout}`);
+            });
+        }
+        else if (message == "readonly.txt") {
+            exec("readonly.txt", (error, stdout, stderr) => {
+                if (error) {
+                    console.log(`error: ${error.message}`);
+                    return;
+                }
+                if (stderr) {
+                    console.log(`stderr: ${stderr}`);
+                    return;
+                }
+                console.log(`stdout: ${stdout}`);
+            });
+        }
         else {
             socket.write(message.toUpperCase());
         }
- 
+
     });
     //telling that on close tab socket will expire/destroy
     socket.on('end', () => {
         console.log('Closed', socket.remoteAddress, 'port', socket.remotePort);
     });
     });
- 
+
     server.maxConnections = 20;
     server.listen(58901);
