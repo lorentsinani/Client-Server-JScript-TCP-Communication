@@ -54,3 +54,36 @@ const server = net.createServer((socket) => {
                 });
             });
         }
+
+        
+        else if (message == "lorik lorik123" || message == "loreta loreta123" || message == "etror etror123") {
+            console.log("Granting read access to user");
+            fs.chmod("example.txt", 0o600, () => {
+                socket.write("\nReading 'readonly.txt' file content");
+                socket.write(fs.readFileSync('readonly.txt', 'utf-8'));
+            });
+        }
+ 
+        //adding some random conditionals of simulated messages
+        else if (message == "Hello" || message == "hello") {
+            socket.write("Hello client!");
+        }
+        else if (message == "What is my ip" || message == "what is my ip") {
+            socket.write("Your IP Address is: " + socket.remoteAddress);
+        }
+        else if (message == "What is my port" || message == "what is my port") {
+            socket.write("Your port is: " + socket.remotePort);
+        }
+        else {
+            socket.write(message.toUpperCase());
+        }
+ 
+    });
+    //telling that on close tab socket will expire/destroy
+    socket.on('end', () => {
+        console.log('Closed', socket.remoteAddress, 'port', socket.remotePort);
+    });
+    });
+ 
+    server.maxConnections = 20;
+    server.listen(58901);
