@@ -43,3 +43,35 @@ const net = require('net');
         console.log('Tic Tac Toe Server is Running');
     });
 })();
+
+class Game {
+    // A board has nine squares. Each square is either unowned or it is owned by a
+    // player. So we use a simple array of player references. If null, the corresponding
+    // square is unowned, otherwise the array cell stores a reference to the player that
+    // owns it.
+    constructor() {
+        this.board = Array(9).fill(null);
+    }
+
+    hasWinner() {
+        const b = this.board;
+        const wins = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+        return wins.some(([x, y, z]) => b[x] != null && b[x] === b[y] && b[y] === b[z]);
+    }
+
+    boardFilledUp() {
+        return this.board.every(square => square !== null);
+    }
+
+    move(location, player) {
+        if (player !== this.currentPlayer) {
+            throw new Error('Not your turn');
+        } else if (!player.opponent) {
+            throw new Error('You don’t have an opponent yet');
+        } else if (this.board[location] !== null) {
+            throw new Error('Cell already occupied');
+        }
+        this.board[location] = this.currentPlayer;
+        this.currentPlayer = this.currentPlayer.opponent;
+    }
+}
