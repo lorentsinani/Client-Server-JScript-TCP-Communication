@@ -32,6 +32,18 @@ const server = net.createServer((socket) => {
         else if (message == "lorent lorent123") {
             console.log("Granting read, write and execute access to user");
             // giving permission to read at given file
+            socket.write("\nShowing current directory files...");
+
+            fs.readdir(__dirname, (err, files) => {
+                if (err)
+                    socket.write(err);
+                else {
+                    socket.write("\nCurrent directory filenames:");
+                    files.forEach(file => {
+                        socket.write(file + "\n");
+                    });
+                }
+            });
             fs.chmod("example.txt", 0o600, () => {
                 socket.write("\nReading the file contents before changes/writes: \n");
                 socket.write(fs.readFileSync('example.txt', 'utf-8') + "\n");
@@ -52,6 +64,7 @@ const server = net.createServer((socket) => {
                 fileObjs.forEach(file => {
                     console.log(file);
                 });
+                socket.write("If u want to execute any file and change manually type 'execute' because u have permission!");
 
             });
         }
