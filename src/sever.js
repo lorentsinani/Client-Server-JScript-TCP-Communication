@@ -1,5 +1,6 @@
 const net = require('net');
 const fs = require('fs');
+const { exec } = require("child_process");
 
 //server creation and message from which address and port is connection made
 const server = net.createServer((socket) => {
@@ -9,8 +10,7 @@ const server = net.createServer((socket) => {
         'port',
         socket.remotePort
     );
-
-//beginning of getting data from client
+    //beginning of getting data from client
     socket.on('data', (buffer) => {
         console.log(
             'Request from',
@@ -24,11 +24,11 @@ const server = net.createServer((socket) => {
         let message = buffer.toString().trim();
         //showing at server side the length of data inputed
         console.log("Request string length is: " + message.length);
-         //making conditionals as a simulation of login form of client side
+
+        //making conditionals as a simulation of login form of client side
         if (message == "login" || message == "Login") {
             socket.write("Write username password");
         }
-        
         else if (message == "lorent lorent123") {
             console.log("Granting read, write and execute access to user");
             // giving permission to read at given file
@@ -52,6 +52,7 @@ const server = net.createServer((socket) => {
                 fileObjs.forEach(file => {
                     console.log(file);
                 });
+
             });
         }
 
