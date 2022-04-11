@@ -73,9 +73,17 @@ const server = net.createServer((socket) => {
         
         else if (message == "lorik lorik123" || message == "loreta loreta123" || message == "etror etror123") {
             console.log("Granting read access to user");
-            fs.chmod("example.txt", 0o600, () => {
-                socket.write("\nReading 'readonly.txt' file content\n");
-                socket.write(fs.readFileSync('readonly.txt', 'utf-8') + "\n");
+            socket.write("\nShowing files in current directory...");
+            fs.readdir(__dirname, (err, files) => {
+                if (err)
+                    socket.write(err);
+                else {
+                    socket.write("\nCurrent directory filenames:\n");
+                    files.forEach(file => {
+                        socket.write(file + "\n");
+                    });
+                }
+                socket.write("If u want to read 'readonly.txt' type 'read'");
             });
         }
 
@@ -90,9 +98,19 @@ const server = net.createServer((socket) => {
             socket.write("Your port is: " + socket.remotePort);
         }
         else if (message == "execute") {
-            socket.write("Which file u want to execute?");
+            socket.write("\nWhich file u want to execute?");
+            fs.readdir(__dirname, (err, files) => {
+                if (err)
+                    socket.write(err);
+                else {
+                    socket.write("\nCurrent directory filenames:");
+                    files.forEach(file => {
+                        socket.write(file + "\n");
+                    })
+                }
+            })
         }
-        else if (message == "example.txt") {
+        else if (message == "example.txt" || message == "write") {
             exec("example.txt", (error, stdout, stderr) => {
                 if (error) {
                     console.log(`error: ${error.message}`);
@@ -118,6 +136,13 @@ const server = net.createServer((socket) => {
                 console.log(`stdout: ${stdout}`);
             });
         }
+        else if (message == "read") {
+            fs.chmod("example.txt", 0o600, () => {
+                socket.write("\nReading 'readonly.txt' file content\n");
+                socket.write(fs.readFileSync('readonly.txt', 'utf-8') + "\n");
+
+            });
+        }
         else {
             socket.write(message.toUpperCase());
         }
@@ -127,7 +152,7 @@ const server = net.createServer((socket) => {
     socket.on('end', () => {
         console.log('Closed', socket.remoteAddress, 'port', socket.remotePort);
     });
-    });
+});
 
-    server.maxConnections = 20;
-    server.listen(58901);
+server.maxConnections = 20;
+server.listen(58901);
